@@ -21,7 +21,6 @@ jobs:
       - name: Build Next.js app
         run: |
           npm run build
-          npx next export
 
       - name: Install lftp
         run: |
