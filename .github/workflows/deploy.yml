@@ -11,12 +11,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+        run: |
+          git clone http://gitea:3000/ranggamaulanaxyz/fourflazz-admin-app.git .
+          git checkout main
 
       - name: Install dependencies
         run: npm install
@@ -26,12 +23,18 @@ jobs:
           npm run build
           npx next export
 
+      - name: Install lftp
+        run: |
+          apt-get update
+          apt-get install -y lftp
+
       - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./out/
-          server-dir: /public_html/
+        run: |
+          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" $FTP_SERVER <<EOF
+          mirror -R ./out /public_html/ --delete --verbose
+          quit
+          EOF
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
