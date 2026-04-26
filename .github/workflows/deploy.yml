@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout repository
         run: |
-          git clone http://gitea:3000/ranggamaulanaxyz/fourflazz-admin-app.git .
+          git clone https://gitea.ranggamaulana.xyz/ranggamaulanaxyz/fourflazz-admin-app.git .
           git checkout main
 
       - name: Install dependencies
